@@ -93,6 +93,7 @@ public class Server {
     }
 
     public void sendMessage(String text) {
+        text=Crypto.Encrypt(text);
         Protocol.Message mess = new Protocol.Message(text);
         if (client != null && client.isOpen()) {
             client.send(Protocol.packMessage(mess));
@@ -122,7 +123,8 @@ public class Server {
         if (name == null||name.length()==0) {//неизвестный пользователь
             name = "Unnamed";
         }
-        listener.onMessageReceived(name,message.getEncodedText());
+        String text=Crypto.Decrypt(message.getEncodedText());
+        listener.onMessageReceived(name,text);
     }
 
     public int getUserCount(){//количество пользователей в чатике
