@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SkillBox chat</string>
+
+    <string name="user_connected">User %s connected</string>
+    <string name="user_disconnected">User %s disconnected</string>
+    <string name="users_online">Users online:</string>
+    <string name="unnamed">Unnamed</string>
+    <string name="view_all_users">View all users</string>
+    <string name="send">Send</string>
+    <string name="enter_message_hint">Enter message text</string>
+    <string name="enter_username_hint">Enter your name here</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="enter">Enter</string>
+</resources>

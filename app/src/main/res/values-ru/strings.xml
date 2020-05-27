@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SkillBox chat</string>
+    <string name="user_connected">%s подключился</string>
+    <string name="user_disconnected">%s отключился</string>
+    <string name="users_online">Количество пользователей</string>
+    <string name="unnamed">Неназванный</string>
+    <string name="view_all_users">Показать всех</string>
+    <string name="send">Отправить</string>
+    <string name="enter_message_hint">Введите текст сообщения</string>
+    <string name="enter_username_hint">Введите ваше имя</string>
+    <string name="enter_name">Введите ваше имя</string>
+    <string name="enter">Войти</string>
+</resources>
