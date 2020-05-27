@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MessageController extends RecyclerView.Adapter {
-    private List<Message> messageList;
+public class MessageController extends RecyclerView.Adapter implements View.OnClickListener {
+    private List<Message> messageList=new ArrayList<>();
     private RecyclerView recyclerView;
 
     private static final int TYPE_INCOMING = 0;
@@ -29,6 +29,27 @@ public class MessageController extends RecyclerView.Adapter {
     private int userNameId;
     private int outgoingLayout;
     private int incomingLayout;
+
+    interface ControllerListener
+    {//расширим немного функциональность
+        void onUserSelected(Long id);//выбран пользователь
+    };
+
+    private ControllerListener controllerListener;
+
+    public MessageController(@NonNull ControllerListener controllerListener){
+        this.controllerListener=controllerListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        try {//попробуем взять TAG
+            Long nTag=Long.parseLong(v.getTag().toString());
+            this.controllerListener.onUserSelected(nTag);
+        }
+        catch (Exception ex){}
+
+    }
 
 
     public static class Message {
@@ -52,6 +73,8 @@ public class MessageController extends RecyclerView.Adapter {
 
         MessageView(@NonNull View itemView, int messageTextId, int messageTimeId, int userNameId) {
             super(itemView);
+            itemView.setTag(userNameId);
+            itemView.setOnClickListener(MessageController.this);
             messageText = itemView.findViewById(messageTextId);
             messageTime = itemView.findViewById(messageTimeId);
             userName = itemView.findViewById(userNameId);
@@ -62,6 +85,13 @@ public class MessageController extends RecyclerView.Adapter {
             messageText.setText(message.text);
             messageTime.setText(fmt.format(message.date));
             userName.setText(message.userName);
+            messageText.setTag(userNameId);
+            messageTime.setTag(userNameId);
+            userName.setTag(userNameId);
+            messageText.setOnClickListener(MessageController.this);
+            messageTime.setOnClickListener(MessageController.this);
+            userName.setOnClickListener(MessageController.this);
+
         }
     }
 

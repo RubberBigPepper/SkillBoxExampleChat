@@ -64,7 +64,7 @@ public class Server {
                         displayIncoming(Protocol.unpackMessage(jsonMessage));
                         break;
                     case Protocol.USER_STATUS:
-                        updateStatus(Protocol.unpackStatus(jsonMessage));
+                        userStatusChanged(Protocol.unpackStatus(jsonMessage));
                         break;
                     default:
                         break;
@@ -106,7 +106,7 @@ public class Server {
         }
     }
 
-    private void updateStatus(Protocol.UserStatus status) {//обработка отключения/подключения пользователей
+    private void userStatusChanged(Protocol.UserStatus status) {//обработка отключения/подключения пользователей
         Protocol.User user = status.getUser();
         if (status.isConnected()) {
             names.put(user.getId(), user.getName());
@@ -138,5 +138,14 @@ public class Server {
             res[index++] = names.get(key)+" (id="+String.valueOf(key)+")";
         }
         return res;
+    }
+
+    public String getUserName(long userID){
+        try{//попробуем найти имя пользователя
+            return names.get(userID);
+        }
+        catch (Exception ex){
+            return "";//иначе пустая строка
+        }
     }
 }

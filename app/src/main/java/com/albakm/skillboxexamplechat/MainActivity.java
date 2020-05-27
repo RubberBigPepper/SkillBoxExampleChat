@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements Server.ServerListener {
+public class MainActivity extends AppCompatActivity implements Server.ServerListener, MessageController.ControllerListener {
     public static String myName = "";
 
     private RecyclerView chatWindow;
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements Server.ServerList
     private Server server;
     private TextView textViewUserCount;
     private Toast mToast;
+    private EditText chatInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements Server.ServerList
 
         chatWindow = findViewById(R.id.chatWindow);
 
-        controller = new MessageController();
+        controller = new MessageController(this);
 //инициализация контроллера чата
         controller.setIncomingLayout(R.layout.incoming_message);
         controller.setOutgoingLayout(R.layout.outgoing_message);
@@ -85,13 +86,15 @@ public class MainActivity extends AppCompatActivity implements Server.ServerList
         });
 //элементы ввода текста и отправки
 
-        final EditText chatInput = findViewById(R.id.chatInput);
+        chatInput = findViewById(R.id.chatInput);
         Button sendMessage = findViewById(R.id.sendMessage);
 
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String text = chatInput.getText().toString();
+                if (text.trim().length()==0)
+                    return;//не будем отправлять пустой текст
                 controller.addMessage(
                         new MessageController.Message(text, myName, true)
                 );
@@ -161,11 +164,20 @@ public class MainActivity extends AppCompatActivity implements Server.ServerList
     private void viewAllUsers(){//просто покажем всех пользователей
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getAllUserCountString());
+        final String[] userNames= server.getUserNames();
         ArrayAdapter<String> adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, server.getUserNames());
+                android.R.layout.simple_list_item_1,  userNames);
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {//клик по элементам списка нам не нужен пока
+                String user= userNames[which];
+                int pos=user.lastIndexOf('(');//отрежем лишнее
+                if (pos>0)
+                    user=user.substring(0,pos).trim();
+                if(user.length()>0&&chatInput.getText().toString().length()==0) {
+                    chatInput.setText(user + ", ");//если выбрано имя пользователя и пустое поле ввода - вставим имя пользователя
+                    chatInput.setSelection(chatInput.getText().length());
+                }
             }
         });
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -175,5 +187,12 @@ public class MainActivity extends AppCompatActivity implements Server.ServerList
             }
         });
         builder.show();
+    }
+
+    @Override
+    public void onUserSelected(Long id) {
+        String strUser=server.getUserName(id);
+        if(strUser.length()>0&&chatInput.getText().toString().length()==0)
+            chatInput.setText(strUser+", ");//если выбрано имя пользователя и пустое поле ввода - вставим имя пользователя
     }
 }
